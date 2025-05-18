@@ -11,6 +11,13 @@ mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db")
 })
 .catch(console.error);
 
+app.use(express.json());
+app.use((req, res, next) => {
+  req.user = {
+    _id: "682a5734755a6a5344c9938f"  // Replace with your actual test user ID
+  };
+  next();
+});
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
