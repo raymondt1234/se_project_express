@@ -1,34 +1,22 @@
-const BadRequestError = (message) => ({
-  status: 400,
-  message: message || "Bad request",
-});
-
-const NotFoundError = (message) => ({
-  status: 404,
-  message: message || "Not found",
-});
-
-const ServerError = (message) => ({
-  status: 500,
-  message: message || "An error occurred on the server",
-});
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("./errorCodes");
 
 const handleErrorType = (err) => {
-  let error;
-
-  if (err.statusCode === 404) {
-    error = NotFoundError(err.message);
-  } else if (err.name === "ValidationError") {
-    error = BadRequestError(err.message);
-  } else if (err.name === "DocumentNotFoundError") {
-    error = NotFoundError("Item ID not found");
-  } else if (err.name === "CastError") {
-    error = BadRequestError("Invalid item ID");
-  } else {
-    error = ServerError("An error occurred on the server");
+  if (err.statusCode === NOT_FOUND || err.name === "DocumentNotFoundError") {
+    return {
+      status: NOT_FOUND,
+      message: "Requested resource not found"
+    };
   }
-
-  return error;
+  if (err.name === "ValidationError" || err.name === "CastError") {
+    return {
+      status: BAD_REQUEST,
+      message: "Invalid data provided"
+    };
+  }
+  return {
+    status: DEFAULT,
+    message: "An error has occurred on the server"
+  };
 };
 
 const errorHandler = (res) => (err) => {

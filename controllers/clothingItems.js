@@ -4,7 +4,7 @@ const { errorHandler } = require("../utils/errors");
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((ClothingItems) => {
-      res.status(200).json(ClothingItems);
+      res.json(ClothingItems);
     })
     .catch(errorHandler(res));
 };
@@ -25,7 +25,7 @@ const deleteClothingItem = (req, res) => {
   ClothingItem.findByIdAndDelete(clothingItemId)
     .orFail()
     .then(() => {
-      res.status(200).json({});
+      res.json({ message: "The item was successfully deleted." });
     })
     .catch(errorHandler(res, "json"));
 };
@@ -40,7 +40,7 @@ const likeClothingItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).json(item);
+      res.json(item);
     })
     .catch(errorHandler(res));
 };
@@ -55,7 +55,7 @@ const dislikeClothingItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).json(item);
+      res.json(item);
     })
     .catch(errorHandler(res));
 };
