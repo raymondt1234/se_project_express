@@ -1,5 +1,20 @@
+// HTTP Status codes
 const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
 const NOT_FOUND = 404;
+const CONFLICT = 409;
 const DEFAULT = 500;
 
-module.exports = { BAD_REQUEST, NOT_FOUND, DEFAULT };
+// MongoDB error codes
+const MONGODB_DUPLICATE_KEY = 11000;
+
+module.exports = {
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONFLICT,
+  DEFAULT,
+  MONGODB_DUPLICATE_KEY,
+};

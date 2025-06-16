@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const { errorHandler } = require("../utils/errors");
+const { errorHandler, accessDeniedError } = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
@@ -22,12 +22,20 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { clothingItemId } = req.params;
-  ClothingItem.findByIdAndDelete(clothingItemId)
+  ClothingItem.findById(clothingItemId)
     .orFail()
-    .then(() => {
-      res.json({ message: "The item was successfully deleted." });
-    })
-    .catch(errorHandler(res, "json"));
+    .then((item) => {
+      if (item.owner === req.user._id) {
+        ClothingItem.findByIdAndDelete(clothingItemId)
+          .orFail()
+          .then(() => {
+            res.json({ message: "The item was successfully deleted." });
+          })
+          .catch(errorHandler(res, "json"));
+      } else {
+        throw accessDeniedError();
+      }
+    }).catch(errorHandler(res));
 };
 
 const likeClothingItem = (req, res) => {
