@@ -9,14 +9,6 @@ const removeUserPassword = (user) => {
   return userWithoutPassword;
 };
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.json(users.map(removeUserPassword));
-    })
-    .catch(errorHandler(res));
-};
-
 const createUser = (req, res) => {
   const { name, password, email, avatar } = req.body;
 
@@ -51,7 +43,7 @@ const updateUser = (req, res) => {
   const { name, avatar } = req.body;
   const { _id } = req.user;
 
-  User.findOneAndUpdate({ _id }, { name, avatar }, { new: true })
+  User.findOneAndUpdate({ _id }, { name, avatar }, { new: true, runValidators: true })
     .orFail()
     .then((user) => {
       res.json(removeUserPassword(user));
@@ -77,4 +69,4 @@ const login = (req, res) => {
   return res.status(error.statusCode).json({ message: error.message });
 };
 
-module.exports = { getUsers, createUser, getCurrentUser, updateUser, login };
+module.exports = { createUser, getCurrentUser, updateUser, login };
