@@ -17,6 +17,10 @@ The WTWR (What to Wear?) backend project is a robust API service that powers the
 * **Node.js**: Runtime environment for executing JavaScript code
 * **ESLint**: Code linting tool following Airbnb style guide
 * **Nodemon**: Development utility for automatic server restart
+* **bcryptjs**: Password hashing with salt for secure storage
+* **cors**: Enables cross-origin requests between frontend and backend
+* **jsonwebtoken**: Creates and verifies JSON Web Tokens for user authentication
+* **validator**: A library of string validators and sanitizers
 
 ## Installation and Setup
 
@@ -26,11 +30,7 @@ The WTWR (What to Wear?) backend project is a robust API service that powers the
 ```bash
 npm install
 ```
-Create a .env file in the root directory and add: 
-```
-PORT=3001 
-MONGODB_URI=<your_mongodb_url>
-```
+
 ## Running the Project
 ### Development mode with hot reload:
 ```bash
@@ -45,19 +45,27 @@ npm run start
 npm run lint
 ```
 ## API Endpoints
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /signup | Creates a new user |
+| POST | /signin | Authenticates a user |
+
 ### Users
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /users | Returns all users |
-| GET | /users/:userId | Returns user by _id |
-| POST | /users | Creates a new user |
+| GET | /users/me | Gets current user information |
+| PATCH | /users/me | Update users name and avatar |
 
 ### Clothing Items
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /items | Returns all clothing items |
+| GET | /items | Gets all clothing items |
 | POST | /items | Creates a new clothing item |
-| DELETE | /items/:itemId | Deletes a clothing item by _id |
+| DELETE | /items/:clothingItemId | Deletes a clothing item by _id |
+| PUT | /items/:clothingItemId/likes | Likes a clothing item by _id |
+| DELETE | /items/:clothingItemId/likes | Dislikes a clothing item by _id |
+
 
 ## Error Handling
 The application implements comprehensive error handling including:
