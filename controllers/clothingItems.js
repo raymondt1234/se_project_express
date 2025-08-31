@@ -1,15 +1,16 @@
 const ClothingItem = require("../models/clothingItem");
-const { errorHandler, accessDeniedError } = require("../utils/errors");
+const ForbiddenError = require("../errors/forbidden-err")
 
-const getClothingItems = (req, res) => {
+
+const getClothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((ClothingItems) => {
       res.json(ClothingItems);
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
-const createClothingItem = (req, res) => {
+const createClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -17,28 +18,29 @@ const createClothingItem = (req, res) => {
     .then((clothingItem) => {
       res.status(201).json(clothingItem);
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
-const deleteClothingItem = (req, res) => {
+const deleteClothingItem = (req, res, next) => {
   const { clothingItemId } = req.params;
   ClothingItem.findById(clothingItemId)
     .orFail()
     .then((item) => {
       if (String(item.owner) === req.user._id) {
-        ClothingItem.findByIdAndDelete(clothingItemId)
+        return ClothingItem.findByIdAndDelete(clothingItemId)
           .orFail()
           .then(() => {
             res.json({ message: "The item was successfully deleted." });
           })
-          .catch(errorHandler(res, "json"));
-      } else {
-        throw accessDeniedError();
+          .catch(next);
       }
-    }).catch(errorHandler(res));
+
+      return next(new ForbiddenError("Access denied"));
+
+    }).catch(next);
 };
 
-const likeClothingItem = (req, res) => {
+const likeClothingItem = (req, res, next) => {
   const { clothingItemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -50,10 +52,10 @@ const likeClothingItem = (req, res) => {
     .then((item) => {
       res.json(item);
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
-const dislikeClothingItem = (req, res) => {
+const dislikeClothingItem = (req, res, next) => {
   const { clothingItemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -65,7 +67,7 @@ const dislikeClothingItem = (req, res) => {
     .then((item) => {
       res.json(item);
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
 module.exports = {

@@ -1,15 +1,15 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { errorHandler, requiredFieldError } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
+const BadRequestError = require("../errors/bad-request-err");
 
 const removeUserPassword = (user) => {
   const { password, ...userWithoutPassword } = user.toObject();
   return userWithoutPassword;
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, password, email, avatar } = req.body;
 
   bcrypt
@@ -25,10 +25,10 @@ const createUser = (req, res) => {
     .then((user) => {
       res.status(201).json(removeUserPassword(user));
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
 
   User.findById(_id)
@@ -36,10 +36,10 @@ const getCurrentUser = (req, res) => {
     .then((user) => {
       res.json(removeUserPassword(user));
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const { name, avatar } = req.body;
   const { _id } = req.user;
 
@@ -48,10 +48,10 @@ const updateUser = (req, res) => {
     .then((user) => {
       res.json(removeUserPassword(user));
     })
-    .catch(errorHandler(res));
+    .catch(next);
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (email && password) {
@@ -62,11 +62,9 @@ const login = (req, res) => {
         });
         res.json({ user: removeUserPassword(user), token });
       })
-      .catch(errorHandler(res));
+      .catch(next);
   }
-
-  const error = requiredFieldError();
-  return res.status(error.statusCode).json({ message: error.message });
+  return next(new BadRequestError("Missing email or password"));
 };
 
 module.exports = { createUser, getCurrentUser, updateUser, login };
