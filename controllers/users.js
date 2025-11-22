@@ -40,15 +40,27 @@ const getCurrentUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
+  console.log("Controller reached with:", req.body);
   const { name, avatar } = req.body;
   const { _id } = req.user;
 
-  User.findOneAndUpdate({ _id }, { name, avatar }, { new: true, runValidators: true })
+  const updates = {};
+  if (name !== undefined) updates.name = name;
+  if (avatar !== undefined) updates.avatar = avatar;
+
+  User.findOneAndUpdate({ _id }, updates, { new: true, runValidators: true })
     .orFail()
     .then((user) => {
       res.json(removeUserPassword(user));
     })
     .catch(next);
+
+  // User.findOneAndUpdate({ _id }, { name, avatar }, { new: true, runValidators: true })
+  //   .orFail()
+  //   .then((user) => {
+  //     res.json(removeUserPassword(user));
+  //   })
+  //   .catch(next);
 };
 
 const login = (req, res, next) => {
