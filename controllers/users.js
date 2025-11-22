@@ -40,7 +40,6 @@ const getCurrentUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-  console.log("Controller reached with:", req.body);
   const { name, avatar } = req.body;
   const { _id } = req.user;
 
