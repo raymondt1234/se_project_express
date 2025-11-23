@@ -53,13 +53,6 @@ const updateUser = (req, res, next) => {
       res.json(removeUserPassword(user));
     })
     .catch(next);
-
-  // User.findOneAndUpdate({ _id }, { name, avatar }, { new: true, runValidators: true })
-  //   .orFail()
-  //   .then((user) => {
-  //     res.json(removeUserPassword(user));
-  //   })
-  //   .catch(next);
 };
 
 const login = (req, res, next) => {

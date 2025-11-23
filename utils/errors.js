@@ -63,18 +63,9 @@ const handleErrorType = (err) => {
     };
   }
   if (err.code === MONGODB_DUPLICATE_KEY) {
-    const conflictNames = Object.keys(err.errorResponse.keyValue);
-    let message = "";
-
-    if (conflictNames.length > 1) {
-      message = `The fields ${conflictNames.join(", ")} must be unique`
-    } else {
-      message = `The ${conflictNames[0]} field must be unique`
-    }
-
     return {
       status: CONFLICT,
-      message
+      message: "This Email is already in use."
     };
   }
   return {
@@ -83,7 +74,7 @@ const handleErrorType = (err) => {
   };
 };
 
-const errorHandler = (res) => (err) => {
+const errorHandler = (err, req, res, next) => {
   const error = handleErrorType(err);
   res.status(error.status).json({ message: error.message });
 };
